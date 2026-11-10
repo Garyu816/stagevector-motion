@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1118">
+  <meta name="description" content="StageVector用の加速度・角速度比較ロガー。計測は端末内で行い、CSVへ保存できます。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>StageVector Motion</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand"><span class="chevron" aria-hidden="true">❯</span><span>Stage<span class="vector">Vector</span></span></div>
+    <div class="header-bottom"><span>MOTION REFERENCE</span><span>v1.0.0</span></div>
+  </header>
+  <section class="status-panel" aria-label="計測状態">
+    <div class="status-line"><span class="dot" id="statusDot"></span><strong id="statusText" role="status">準備中</strong><span class="local-tag">端末内保存</span></div>
+    <p id="statusDetail">保存機能を確認しています。</p>
+    <div class="stats"><div><span>経過時間</span><strong id="elapsed">00:00</strong></div><div><span>受信 / 秒</span><strong id="rate">—</strong></div><div><span>サンプル</span><strong id="count">0</strong></div></div>
+    <div class="storage-line"><span id="storageText">保存先を確認中</span><span id="wakeText">画面維持：待機</span></div>
+  </section>
+  <section class="controls" aria-label="記録操作">
+    <button class="primary" id="startButton" disabled>計測を開始</button>
+    <button class="stop" id="stopButton" disabled>停止して保存</button>
+    <button class="marker" id="markButton" disabled>マーカーを追加</button>
+    <div class="export-actions" id="exportActions" hidden><a id="downloadLink" class="save-link">CSVを保存</a><button id="shareButton" hidden>共有する</button></div>
+    <p class="export-hint" id="exportHint" hidden>CSVを「ファイル」に保存し、CANログと一緒にPCへ移してください。</p>
+  </section>
+  <section class="signals" aria-label="センサー値">
+    <div class="section-title"><h1>加速度 <small>g</small></h1><span>重力除去値</span></div>
+    <div class="values"><div class="axis x"><span>X</span><strong id="ax">—</strong></div><div class="axis y"><span>Y</span><strong id="ay">—</strong></div><div class="axis z"><span>Z</span><strong id="az">—</strong></div></div>
+    <div class="section-title"><h2>角速度 <small>°/s</small></h2><span>端末の回転</span></div>
+    <div class="values"><div class="axis x"><span>α</span><strong id="ra">—</strong></div><div class="axis y"><span>β</span><strong id="rb">—</strong></div><div class="axis z"><span>γ</span><strong id="rg">—</strong></div></div>
+    <p class="axis-note">端末軸の生値です。車体の前後・左右・ヨーへの対応は、取り付け方向と波形で確認します。CSVには重力込み加速度も残します。</p>
+  </section>
+  <section class="setup" aria-label="計測設定">
+    <label for="mountNote">取り付け方向のメモ</label>
+    <input id="mountNote" maxlength="120" placeholder="例：縦向き・上端が上・画面は運転席側">
+    <div class="demo-option"><label><input type="checkbox" id="demoMode"> 模擬データで動作確認</label><span>実測とは別のSIMファイルになります</span></div>
+  </section>
+  <details class="guide"><summary>初めて使うとき・計測の注意</summary><ol><li>iPhoneを動かないように固定し、方向をメモします。</li><li>Safariで「計測を開始」を押し、動作センサーの利用を許可します。</li><li>CAN側も記録を開始し、停車区間と穏やかな加減速・旋回を残します。時刻の一致は保証されないので、後から波形で合わせます。</li><li>Safariを前面にしたまま計測します。別アプリ・画面ロックでは記録を中断し、自動再開しません。</li><li>「停止して保存」の後、「CSVを保存」でファイルへ書き出します。</li></ol><p>実際の取得周期は端末次第です。100msを超えるサンプル間隔は空白として記録します。画面維持を要求しますが、拒否・解除される場合があります。1回の計測は最大30分です。</p><p>このページには計測データを送信する処理はありません。ブラウザー内保存は消去されることがあるため、終了後にCSVを書き出してください。HTMLをダウンロードするだけの利用や、オフラインでの再読込みは動作保証していません。</p></details>
+  <section class="history"><div class="section-title"><h2>この端末の記録</h2><button class="text-button" id="refreshButton">更新</button></div><p class="muted">自動保存できた記録を回収できます。別端末・別ブラウザーの記録は表示されません。</p><div id="sessions">記録を確認中</div></section>
+  <footer><span>StageVector / 比較計測用</span><span>CANとの自動同期なし</span></footer>
+</main>
+</body>
+</html>
